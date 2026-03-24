@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXΑ - Artificial Intelligence, Redefined</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400;500&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwindcss.config = {
+      theme: {
+        extend: {
+          colors: {
+            void: '#06060a',
+            ash: '#111118',
+            smoke: '#1c1c26',
+            silver: '#8a8a9a',
+            bone: '#e8e4dd',
+            cream: '#f5f2ec',
+            signal: '#c4ff36',
+            ember: '#ff4d2a',
+          },
+          fontFamily: {
+            display: ['Syne', 'sans-serif'],
+            serif: ['Instrument Serif', 'serif'],
+            mono: ['DM Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { background: #06060a; color: #e8e4dd; overflow-x: hidden; }
+
+    /* Grain overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideRight {
+      from { transform: scaleX(0); }
+      to { transform: scaleX(1); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(1deg); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+    @keyframes rotateOrb {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .animate-up { animation: fadeUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards; opacity: 0; }
+    .animate-in { animation: fadeIn 1s ease forwards; opacity: 0; }
+    .animate-line { animation: slideRight 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards; transform-origin: left; }
+    .animate-float { animation: float 6s ease-in-out infinite; }
+    .animate-marquee { animation: marquee 30s linear infinite; }
+
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+    .delay-5 { animation-delay: 0.5s; }
+    .delay-6 { animation-delay: 0.6s; }
+    .delay-7 { animation-delay: 0.7s; }
+    .delay-8 { animation-delay: 0.8s; }
+
+    /* Scroll reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Custom cursor glow */
+    .glow-cursor {
+      position: fixed;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(196, 255, 54, 0.06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: opacity 0.3s;
+    }
+
+    /* Hover lift */
+    .hover-lift {
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
+    }
+    .hover-lift:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(196, 255, 54, 0.08);
+    }
+
+    /* Diagonal line decoration */
+    .diagonal-line {
+      position: absolute;
+      width: 1px;
+      height: 120px;
+      background: linear-gradient(to bottom, transparent, rgba(196, 255, 54, 0.3), transparent);
+      transform: rotate(35deg);
+    }
+
+    /* Service card border animation */
+    .service-card {
+      position: relative;
+      overflow: hidden;
+    }
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #c4ff36, transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
+    }
+    .service-card:hover::before {
+      transform: translateX(0);
+    }
+
+    /* Number styling */
+    .big-number {
+      -webkit-text-stroke: 1px rgba(196, 255, 54, 0.3);
+      color: transparent;
+    }
+  </style>
+</head>
+<body>
+  <div class="glow-cursor" id="glowCursor"></div>
+
+  <!-- Navigation -->
+  <nav class="fixed top-0 w-full z-50 animate-in">
+    <div class="mx-auto max-w-[1400px] px-6 md:px-12 py-6 flex items-center justify-between">
+      <a href="#" class="font-display font-800 text-2xl tracking-tight text-cream">
+        NEX<span class="text-signal">A</span>
+      </a>
+      <div class="hidden md:flex items-center gap-10 font-mono text-xs tracking-widest uppercase text-silver">
+        <a href="#about" class="hover:text-signal transition-colors duration-300">About</a>
+        <a href="#services" class="hover:text-signal transition-colors duration-300">Services</a>
+        <a href="#work" class="hover:text-signal transition-colors duration-300">Work</a>
+        <a href="#contact" class="hover:text-signal transition-colors duration-300">Contact</a>
+      </div>
+      <a href="#contact" class="hidden md:block border border-signal/30 text-signal font-mono text-xs tracking-widest uppercase px-6 py-3 hover:bg-signal hover:text-void transition-all duration-300">
+        Talk to us
+      </a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="relative min-h-screen flex items-center pt-24">
+    <!-- Background orb -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] opacity-20" style="animation: rotateOrb 40s linear infinite;">
+      <div class="absolute inset-0 rounded-full border border-signal/20"></div>
+      <div class="absolute inset-8 rounded-full border border-signal/10"></div>
+      <div class="absolute inset-16 rounded-full border border-ember/10"></div>
+      <div class="absolute top-0 left-1/2 w-2 h-2 bg-signal rounded-full -translate-x-1/2"></div>
+      <div class="absolute bottom-0 left-1/2 w-1.5 h-1.5 bg-ember rounded-full -translate-x-1/2"></div>
+    </div>
+
+    <div class="mx-auto max-w-[1400px] px-6 md:px-12 w-full">
+      <div class="grid md:grid-cols-12 gap-8 items-end">
+        <div class="md:col-span-8">
+          <p class="font-mono text-xs tracking-[0.3em] uppercase text-signal mb-8 animate-up delay-1">
+            Artificial Intelligence, Redefined
+          </p>
+          <h1 class="font-display font-800 text-[clamp(3rem,8vw,8rem)] leading-[0.9] tracking-tight animate-up delay-2">
+            We build<br>
+            <span class="font-serif italic font-normal text-signal">intelligence</span><br>
+            that matters.
+          </h1>
+          <div class="h-px bg-gradient-to-r from-signal/50 to-transparent mt-12 mb-8 animate-line delay-5"></div>
+          <p class="font-mono text-sm text-silver max-w-lg leading-relaxed animate-up delay-5">
+            NEXA is a Tokyo-based AI laboratory engineering next-generation
+            foundation models, autonomous agents, and decision systems
+            for enterprises reshaping their industries.
+          </p>
+        </div>
+        <div class="md:col-span-4 md:text-right animate-up delay-6">
+          <div class="inline-flex flex-col gap-4 font-mono text-xs text-silver">
+            <div class="flex items-center gap-3 justify-end">
+              <span class="w-1.5 h-1.5 bg-signal rounded-full" style="animation: pulse 2s infinite;"></span>
+              <span>Systems operational</span>
+            </div>
+            <div>Est. 2021 / Tokyo, JP</div>
+            <div>42 researchers & engineers</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scroll indicator -->
+      <div class="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 animate-up delay-8">
+        <span class="font-mono text-[10px] tracking-[0.3em] uppercase text-silver/50">Scroll</span>
+        <div class="w-px h-12 bg-gradient-to-b from-signal/40 to-transparent"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Marquee strip -->
+  <div class="border-y border-white/5 py-4 overflow-hidden">
+    <div class="animate-marquee whitespace-nowrap flex items-center gap-12 font-mono text-xs tracking-[0.2em] uppercase text-silver/30">
+      <span>Foundation Models</span><span class="text-signal/30">/</span>
+      <span>Autonomous Agents</span><span class="text-signal/30">/</span>
+      <span>Computer Vision</span><span class="text-signal/30">/</span>
+      <span>Natural Language</span><span class="text-signal/30">/</span>
+      <span>Reinforcement Learning</span><span class="text-signal/30">/</span>
+      <span>Edge Inference</span><span class="text-signal/30">/</span>
+      <span>Multimodal Systems</span><span class="text-signal/30">/</span>
+      <span>Decision Intelligence</span><span class="text-signal/30">/</span>
+      <span>Foundation Models</span><span class="text-signal/30">/</span>
+      <span>Autonomous Agents</span><span class="text-signal/30">/</span>
+      <span>Computer Vision</span><span class="text-signal/30">/</span>
+      <span>Natural Language</span><span class="text-signal/30">/</span>
+      <span>Reinforcement Learning</span><span class="text-signal/30">/</span>
+      <span>Edge Inference</span><span class="text-signal/30">/</span>
+      <span>Multimodal Systems</span><span class="text-signal/30">/</span>
+      <span>Decision Intelligence</span><span class="text-signal/30">/</span>
+    </div>
+  </div>
+
+  <!-- About -->
+  <section id="about" class="py-32 md:py-48 relative">
+    <div class="diagonal-line top-20 right-[20%]"></div>
+    <div class="mx-auto max-w-[1400px] px-6 md:px-12">
+      <div class="grid md:grid-cols-12 gap-16">
+        <div class="md:col-span-5 reveal">
+          <span class="font-mono text-[10px] tracking-[0.4em] uppercase text-signal/60 block mb-6">001 / About</span>
+          <h2 class="font-display font-700 text-4xl md:text-5xl leading-tight">
+            Thought precedes<br>
+            <span class="font-serif italic text-signal">technology.</span>
+          </h2>
+        </div>
+        <div class="md:col-span-6 md:col-start-7 reveal" style="transition-delay: 0.15s;">
+          <p class="text-silver leading-[1.8] text-lg mb-8">
+            2021年の創業以来、NEXAは「知能の本質」を追求し続けてきました。
+            私たちは単なるモデル開発に留まらず、知能が生まれるメカニズムそのものを解明し、
+            それを実世界の複雑な意思決定に応用します。
+          </p>
+          <p class="text-silver/60 leading-[1.8]">
+            東京を拠点に、世界トップクラスの研究者とエンジニアが集結。
+            基礎研究から社会実装まで、一気通貫で取り組む稀有なAIラボラトリーです。
+          </p>
+          <div class="grid grid-cols-3 gap-8 mt-16 pt-8 border-t border-white/5">
+            <div class="reveal" style="transition-delay: 0.3s;">
+              <div class="font-display font-800 text-4xl text-signal">12</div>
+              <div class="font-mono text-[10px] tracking-widest uppercase text-silver/40 mt-2">Published Papers</div>
+            </div>
+            <div class="reveal" style="transition-delay: 0.4s;">
+              <div class="font-display font-800 text-4xl text-signal">3.2<span class="text-lg">B</span></div>
+              <div class="font-mono text-[10px] tracking-widest uppercase text-silver/40 mt-2">Parameters Trained</div>
+            </div>
+            <div class="reveal" style="transition-delay: 0.5s;">
+              <div class="font-display font-800 text-4xl text-signal">99.4<span class="text-lg">%</span></div>
+              <div class="font-mono text-[10px] tracking-widest uppercase text-silver/40 mt-2">Uptime SLA</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section id="services" class="py-32 md:py-48 bg-ash/50 relative">
+    <div class="mx-auto max-w-[1400px] px-6 md:px-12">
+      <div class="flex items-end justify-between mb-20 reveal">
+        <div>
+          <span class="font-mono text-[10px] tracking-[0.4em] uppercase text-signal/60 block mb-6">002 / Services</span>
+          <h2 class="font-display font-700 text-4xl md:text-6xl leading-tight">
+            What we <span class="font-serif italic text-signal">engineer.</span>
+          </h2>
+        </div>
+        <div class="hidden md:block font-mono text-xs text-silver/30">[04 Capabilities]</div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4">
+        <!-- Card 1 -->
+        <div class="service-card bg-smoke/60 backdrop-blur-sm p-10 md:p-14 hover-lift reveal group">
+          <div class="flex items-start justify-between mb-8">
+            <span class="big-number font-display font-800 text-6xl">01</span>
+            <span class="w-10 h-10 border border-signal/20 rounded-full flex items-center justify-center group-hover:bg-signal group-hover:border-signal transition-all duration-300">
+              <svg class="w-4 h-4 text-signal group-hover:text-void transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7v10"/>
+              </svg>
+            </span>
+          </div>
+          <h3 class="font-display font-700 text-2xl mb-4">Foundation Model Development</h3>
+          <p class="text-silver/60 text-sm leading-relaxed">
+            独自アーキテクチャによる大規模言語モデルの設計・学習。
+            ドメイン特化型モデルで、汎用モデルを超える精度を実現します。
+          </p>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="service-card bg-smoke/60 backdrop-blur-sm p-10 md:p-14 hover-lift reveal group" style="transition-delay: 0.1s;">
+          <div class="flex items-start justify-between mb-8">
+            <span class="big-number font-display font-800 text-6xl">02</span>
+            <span class="w-10 h-10 border border-signal/20 rounded-full flex items-center justify-center group-hover:bg-signal group-hover:border-signal transition-all duration-300">
+              <svg class="w-4 h-4 text-signal group-hover:text-void transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7v10"/>
+              </svg>
+            </span>
+          </div>
+          <h3 class="font-display font-700 text-2xl mb-4">Autonomous Agent Systems</h3>
+          <p class="text-silver/60 text-sm leading-relaxed">
+            複雑なワークフローを自律的に遂行するAIエージェントの構築。
+            人間の監督下で、判断・実行・学習のサイクルを回し続けます。
+          </p>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="service-card bg-smoke/60 backdrop-blur-sm p-10 md:p-14 hover-lift reveal group" style="transition-delay: 0.2s;">
+          <div class="flex items-start justify-between mb-8">
+            <span class="big-number font-display font-800 text-6xl">03</span>
+            <span class="w-10 h-10 border border-signal/20 rounded-full flex items-center justify-center group-hover:bg-signal group-hover:border-signal transition-all duration-300">
+              <svg class="w-4 h-4 text-signal group-hover:text-void transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7v10"/>
+              </svg>
+            </span>
+          </div>
+          <h3 class="font-display font-700 text-2xl mb-4">Multimodal Intelligence</h3>
+          <p class="text-silver/60 text-sm leading-relaxed">
+            テキスト・画像・音声・映像を横断的に理解するマルチモーダルAI。
+            製造、医療、クリエイティブ領域での高度な認識を可能にします。
+          </p>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="service-card bg-smoke/60 backdrop-blur-sm p-10 md:p-14 hover-lift reveal group" style="transition-delay: 0.3s;">
+          <div class="flex items-start justify-between mb-8">
+            <span class="big-number font-display font-800 text-6xl">04</span>
+            <span class="w-10 h-10 border border-signal/20 rounded-full flex items-center justify-center group-hover:bg-signal group-hover:border-signal transition-all duration-300">
+              <svg class="w-4 h-4 text-signal group-hover:text-void transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7v10"/>
+              </svg>
+            </span>
+          </div>
+          <h3 class="font-display font-700 text-2xl mb-4">Decision Intelligence Platform</h3>
+          <p class="text-silver/60 text-sm leading-relaxed">
+            不確実性の中で最適な意思決定を導くプラットフォーム。
+            リアルタイムデータと予測モデルで、経営判断を支援します。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Work / Case Studies -->
+  <section id="work" class="py-32 md:py-48 relative">
+    <div class="mx-auto max-w-[1400px] px-6 md:px-12">
+      <span class="font-mono text-[10px] tracking-[0.4em] uppercase text-signal/60 block mb-6 reveal">003 / Selected Work</span>
+      <h2 class="font-display font-700 text-4xl md:text-6xl leading-tight mb-20 reveal">
+        Intelligence in <span class="font-serif italic text-signal">action.</span>
+      </h2>
+
+      <!-- Case 1 -->
+      <div class="border-t border-white/5 py-12 md:py-16 grid md:grid-cols-12 gap-8 items-center group reveal">
+        <div class="md:col-span-1 font-mono text-xs text-signal/40">01</div>
+        <div class="md:col-span-5">
+          <h3 class="font-display font-600 text-2xl md:text-3xl group-hover:text-signal transition-colors duration-300">
+            Autonomous Supply Chain
+          </h3>
+          <p class="font-mono text-xs text-silver/40 mt-2">Global Logistics Corp.</p>
+        </div>
+        <div class="md:col-span-4">
+          <p class="text-silver/50 text-sm leading-relaxed">
+            需給予測AIとリアルタイム最適化により、物流コストを32%削減。年間80億円規模のインパクトを創出。
+          </p>
+        </div>
+        <div class="md:col-span-2 md:text-right">
+          <span class="font-display font-800 text-3xl text-signal/30 group-hover:text-signal transition-colors duration-300">-32%</span>
+          <div class="font-mono text-[10px] text-silver/30 mt-1">Cost Reduction</div>
+        </div>
+      </div>
+
+      <!-- Case 2 -->
+      <div class="border-t border-white/5 py-12 md:py-16 grid md:grid-cols-12 gap-8 items-center group reveal">
+        <div class="md:col-span-1 font-mono text-xs text-signal/40">02</div>
+        <div class="md:col-span-5">
+          <h3 class="font-display font-600 text-2xl md:text-3xl group-hover:text-signal transition-colors duration-300">
+            Medical Imaging Analysis
+          </h3>
+          <p class="font-mono text-xs text-silver/40 mt-2">National Health Institute</p>
+        </div>
+        <div class="md:col-span-4">
+          <p class="text-silver/50 text-sm leading-relaxed">
+            マルチモーダルモデルによる画像診断支援。早期がん検出率を従来比で18ポイント向上。
+          </p>
+        </div>
+        <div class="md:col-span-2 md:text-right">
+          <span class="font-display font-800 text-3xl text-signal/30 group-hover:text-signal transition-colors duration-300">+18pt</span>
+          <div class="font-mono text-[10px] text-silver/30 mt-1">Detection Rate</div>
+        </div>
+      </div>
+
+      <!-- Case 3 -->
+      <div class="border-t border-white/5 py-12 md:py-16 grid md:grid-cols-12 gap-8 items-center group reveal border-b">
+        <div class="md:col-span-1 font-mono text-xs text-signal/40">03</div>
+        <div class="md:col-span-5">
+          <h3 class="font-display font-600 text-2xl md:text-3xl group-hover:text-signal transition-colors duration-300">
+            Generative Design Engine
+          </h3>
+          <p class="font-mono text-xs text-silver/40 mt-2">Architecture Studio MORI</p>
+        </div>
+        <div class="md:col-span-4">
+          <p class="text-silver/50 text-sm leading-relaxed">
+            建築設計プロセスにAIを統合。設計バリエーション生成の速度を50倍に加速し、空間品質を向上。
+          </p>
+        </div>
+        <div class="md:col-span-2 md:text-right">
+          <span class="font-display font-800 text-3xl text-signal/30 group-hover:text-signal transition-colors duration-300">50x</span>
+          <div class="font-mono text-[10px] text-silver/30 mt-1">Speed Increase</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Philosophy -->
+  <section class="py-32 md:py-48 relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-b from-void via-ash/30 to-void"></div>
+    <div class="mx-auto max-w-[1400px] px-6 md:px-12 relative">
+      <div class="max-w-4xl mx-auto text-center reveal">
+        <span class="font-mono text-[10px] tracking-[0.4em] uppercase text-signal/60 block mb-10">004 / Philosophy</span>
+        <blockquote class="font-serif italic text-3xl md:text-5xl lg:text-6xl leading-[1.2] text-cream">
+          "The future doesn't belong to those who build AI.<br>
+          It belongs to those who understand
+          <span class="text-signal not-italic font-display font-700">why</span>."
+        </blockquote>
+        <div class="mt-12 font-mono text-xs text-silver/40 tracking-widest uppercase">
+          &mdash; Kaito Nishimura, Founder & Chief Scientist
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="py-32 md:py-48 relative">
+    <div class="mx-auto max-w-[1400px] px-6 md:px-12">
+      <div class="grid md:grid-cols-12 gap-16">
+        <div class="md:col-span-7 reveal">
+          <span class="font-mono text-[10px] tracking-[0.4em] uppercase text-signal/60 block mb-6">005 / Contact</span>
+          <h2 class="font-display font-700 text-4xl md:text-7xl leading-[0.95]">
+            Let's build what's<br>
+            <span class="font-serif italic text-signal">next.</span>
+          </h2>
+          <div class="h-px bg-gradient-to-r from-signal/30 to-transparent my-12"></div>
+          <a href="mailto:hello@nexa-ai.jp" class="inline-flex items-center gap-4 group">
+            <span class="font-mono text-lg md:text-xl text-cream group-hover:text-signal transition-colors duration-300">
+              hello@nexa-ai.jp
+            </span>
+            <span class="w-10 h-10 border border-signal/20 rounded-full flex items-center justify-center group-hover:bg-signal group-hover:border-signal transition-all duration-300">
+              <svg class="w-4 h-4 text-signal group-hover:text-void transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7v10"/>
+              </svg>
+            </span>
+          </a>
+        </div>
+        <div class="md:col-span-4 md:col-start-9 reveal" style="transition-delay: 0.2s;">
+          <div class="space-y-10">
+            <div>
+              <div class="font-mono text-[10px] tracking-[0.3em] uppercase text-signal/40 mb-3">Location</div>
+              <div class="text-silver text-sm leading-relaxed">
+                Roppongi Hills Mori Tower 42F<br>
+                6-10-1 Roppongi, Minato-ku<br>
+                Tokyo 106-6142, Japan
+              </div>
+            </div>
+            <div>
+              <div class="font-mono text-[10px] tracking-[0.3em] uppercase text-signal/40 mb-3">Connect</div>
+              <div class="flex gap-6">
+                <a href="#" class="font-mono text-xs text-silver hover:text-signal transition-colors duration-300">X/Twitter</a>
+                <a href="#" class="font-mono text-xs text-silver hover:text-signal transition-colors duration-300">LinkedIn</a>
+                <a href="#" class="font-mono text-xs text-silver hover:text-signal transition-colors duration-300">GitHub</a>
+              </div>
+            </div>
+            <div>
+              <div class="font-mono text-[10px] tracking-[0.3em] uppercase text-signal/40 mb-3">Careers</div>
+              <p class="text-silver/50 text-sm">
+                We're always looking for exceptional minds.<br>
+                <a href="#" class="text-signal hover:underline">View open positions &rarr;</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-white/5 py-8">
+    <div class="mx-auto max-w-[1400px] px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="font-mono text-[10px] tracking-widest uppercase text-silver/30">
+        &copy; 2026 NEXA Inc. All rights reserved.
+      </div>
+      <div class="font-display font-800 text-sm text-silver/10 tracking-tight">
+        NEX<span class="text-signal/20">A</span>
+      </div>
+      <div class="font-mono text-[10px] text-silver/30">
+        Engineered in Tokyo
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Cursor glow
+    const glow = document.getElementById('glowCursor');
+    document.addEventListener('mousemove', (e) => {
+      glow.style.left = e.clientX + 'px';
+      glow.style.top = e.clientY + 'px';
+    });
+
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
